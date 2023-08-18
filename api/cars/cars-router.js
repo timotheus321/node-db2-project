@@ -4,9 +4,10 @@ const Car = require('./cars-model')
 const router = express.Router()
 const {
     checkCarId,
-    checkVinNumberUnique,
+    checkCarPayload,
     checkVinNumberValid,
-    checkCarPayload
+    checkVinNumberUnique,
+    
 } = require('./cars-middleware')
 
 router.get('/', async (req, res, next) => {
@@ -20,12 +21,13 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', checkCarId, async (req, res, next) => {
    res.json(req.car)
 })
-router.post('/', checkVinNumberUnique, checkCarPayload, checkVinNumberValid, async (req, res, next) => {
+
+router.post('/',  checkCarPayload, checkVinNumberValid, checkVinNumberUnique, async (req, res, next) => {
     try {
-      console.log("Request Payload:", req.body); // Log the request payload
       const car = await Car.create(req.body);
       res.json(car);
     } catch (err) {
+        console.log("Error in POST /api/cars:", err); // Add this line
       next(err);
     }
   });
